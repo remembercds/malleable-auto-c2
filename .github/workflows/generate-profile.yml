@@ -2,32 +2,31 @@ name: Generate Malleable C2 Profile
 
 on:
   schedule:
-    - cron: "0 5 * * *" # every day at 5 AM UTC
+    - cron: "0 0 * * *"  # Daily at midnight UTC
   workflow_dispatch:
 
 jobs:
-  build:
+  generate:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false  # 👈 Important for custom token use
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install -r requirements.txt || true
+        run: pip install -r requirements.txt
 
-      - name: Run profile generator
+      - name: Generate and validate C2 profiles
         run: python scripts/generate_and_validate_profiles.py
 
-      - name: Get theme
-        id: theme
-        run: echo "THEME=$(cat theme.log)" >> $GITHUB_OUTPUT
-
-      - name: Commit and push
+      - name: Commit and push profile
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -35,5 +34,5 @@ jobs:
           git config --global user.email "bot@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
           git add profiles/*.profile theme.log
-          git commit -m "auto: generated ${{ steps.theme.outputs.THEME }} profile [$(date +'%Y-%m-%d')]" || echo "No changes"
-          git push origin main
+          git commit -m "auto: generated $(head -n 1 theme.log) profile [$(date +'%Y-%m-%d')]" || echo "No changes to commit"
+          git push origin HEAD:main
