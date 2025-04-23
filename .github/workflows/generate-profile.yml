@@ -1,5 +1,8 @@
 name: Generate Malleable C2 Profile
 
+permissions:
+  contents: write
+
 on:
   schedule:
     - cron: "0 0 * * *"  # Daily at midnight UTC
