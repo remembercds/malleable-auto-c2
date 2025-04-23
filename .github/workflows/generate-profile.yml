@@ -28,9 +28,12 @@ jobs:
         run: echo "THEME=$(cat theme.log)" >> $GITHUB_OUTPUT
 
       - name: Commit and push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "auto-profile-bot"
           git config --global user.email "bot@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}
           git add profiles/*.profile theme.log
           git commit -m "auto: generated ${{ steps.theme.outputs.THEME }} profile [$(date +'%Y-%m-%d')]" || echo "No changes"
-          git push
+          git push origin main
