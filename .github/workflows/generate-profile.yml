@@ -1,0 +1,36 @@
+name: Generate Malleable C2 Profile
+
+on:
+  schedule:
+    - cron: "0 5 * * *" # every day at 5 AM UTC
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.10
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt || true
+
+      - name: Run profile generator
+        run: python scripts/generate_and_validate_profiles.py
+
+      - name: Get theme
+        id: theme
+        run: echo "THEME=$(cat theme.log)" >> $GITHUB_OUTPUT
+
+      - name: Commit and push
+        run: |
+          git config --global user.name "auto-profile-bot"
+          git config --global user.email "bot@users.noreply.github.com"
+          git add profiles/*.profile theme.log
+          git commit -m "auto: generated ${{ steps.theme.outputs.THEME }} profile [$(date +'%Y-%m-%d')]" || echo "No changes"
+          git push

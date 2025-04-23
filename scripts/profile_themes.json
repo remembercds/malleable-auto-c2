@@ -1,0 +1,23 @@
+[
+  {
+    "name": "GitHub",
+    "useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    "host": "github.com",
+    "uri_prefix": "/repos/user/repo/contents/",
+    "cdn_front": "github.map.fastly.net"
+  },
+  {
+    "name": "AWS S3",
+    "useragent": "aws-sdk-java/1.11.563 Linux/4.14 Java_HotSpot(TM)_64-Bit_Server_VM/25.251-b08 java/1.8.0_251",
+    "host": "s3.amazonaws.com",
+    "uri_prefix": "/bucket/data/",
+    "cdn_front": "cloudfront.net"
+  },
+  {
+    "name": "Google APIs",
+    "useragent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)",
+    "host": "www.googleapis.com",
+    "uri_prefix": "/drive/v3/files/",
+    "cdn_front": "googleusercontent.com"
+  }
+]
